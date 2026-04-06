@@ -1,6 +1,7 @@
 import pygame
-from constants import SCREEN_HEIGHT, SCREEN_WIDTH 
+from constants import *
 from logger import log_state
+from circleshape import *
 
 def main():
     pygame.init()
