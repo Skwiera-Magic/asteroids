@@ -20,6 +20,7 @@ def main():
     timer = pygame.time.Clock()
     dt = 0
     score = 0
+    game_over = False
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
@@ -38,8 +39,7 @@ def main():
         for asteroid in asteroids:
             if asteroid.collides_with(my_player):
                 log_event("player_hit")
-                print("Game over!")
-                sys.exit()
+                game_over = True
         for asteroid in asteroids:
             for bullet in shots:
                 if bullet.collides_with(asteroid):
@@ -56,6 +56,13 @@ def main():
             draw.draw(screen)
             score_surface = font.render(f"Score: {score}", True, (255, 255, 255))
             screen.blit(score_surface, (10, 10))
+            if game_over:
+                screen.fill("black")
+                game_over_text = font.render("GAME OVER", True, (255, 0, 0))
+                final_score_text = font.render(f"Final score: {score}", True, (255, 255, 255))
+                screen.blit(game_over_text, ((SCREEN_WIDTH / 2) - (game_over_text.get_width() / 2), SCREEN_HEIGHT / 2 - 20))
+                screen.blit(final_score_text, ((SCREEN_WIDTH / 2) - (final_score_text.get_width() / 2), SCREEN_HEIGHT / 2 + 20))
+                pygame.display.flip()
         pygame.display.flip()
         dt = timer.tick(60) / 1000
 
