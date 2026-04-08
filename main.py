@@ -9,6 +9,7 @@ from asteroidfield import AsteroidField
 from shot import Shot
 
 def main():
+    state = "MENU"
     pygame.init()
     print("Starting Asteroids with pygame version:", pygame.version.ver)
     print("Screen width:", SCREEN_WIDTH)
@@ -34,21 +35,35 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
-            if game_over and event.type == pygame.KEYDOWN:
+            if state == "MENU" and event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    state = "PLAYING"
+            if state == "GAME_OVER" and event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     for sprite in updatable:
                         sprite.kill()
                     AsteroidField()
                     my_player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
                     score = 0
-                    game_over = False
+                    state = "PLAYING"
         screen.fill("black")
-        if not game_over:
+        if state == "MENU":
+            title_text = font.render("ASTEROIDS", True, (255, 255, 255))
+            start_text = font.render("Press ENTER to Start", True, (200, 200, 200))
+            controls = font.render("Controls:", True, (255, 255, 255))
+            wsad = font.render("WSAD - Ship controls", True, (255, 255, 255))
+            spacebar = font.render("Space - Shoot", True, (255, 255, 255))
+            screen.blit(title_text, ((SCREEN_WIDTH / 2) - (title_text.get_width() / 2), SCREEN_HEIGHT / 2 - 20))
+            screen.blit(start_text, ((SCREEN_WIDTH / 2) - (start_text.get_width() / 2), SCREEN_HEIGHT / 2 + 20))
+            screen.blit(controls, (20, 20))
+            screen.blit(wsad, (20, 60))
+            screen.blit(spacebar, (20, 100))
+        elif state == "PLAYING":
             updatable.update(dt)
             for asteroid in asteroids:
                 if asteroid.collides_with(my_player):
                     log_event("player_hit")
-                    game_over = True
+                    state = "GAME_OVER"
                 for bullet in shots:
                     if bullet.collides_with(asteroid):
                         log_event("asteroid_shot")
@@ -62,9 +77,11 @@ def main():
                         asteroid.split()
             for draw in drawable:
                 draw.draw(screen)
+            if game_over:
+                state = "GAME_OVER"
             score_surface = font.render(f"Score: {score}", True, (255, 255, 255))
             screen.blit(score_surface, (10, 10))
-        else:
+        elif state == "GAME_OVER":
             game_over_text = font.render("GAME OVER", True, (255, 0, 0))
             final_score_text = font.render(f"Final score: {score}", True, (255, 255, 255))
             restart_text = font.render("Press R to start again", True, (255, 255, 255))
