@@ -28,41 +28,39 @@ def main():
     Shot.containers = (shots, updatable, drawable)
     AsteroidField()
     my_player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+    font = pygame.font.Font(None, 36)
     while True:
         log_state()
-        font = pygame.font.Font(None, 36)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
         screen.fill("black")
-        updatable.update(dt)
-        for asteroid in asteroids:
-            if asteroid.collides_with(my_player):
-                log_event("player_hit")
-                game_over = True
-        for asteroid in asteroids:
-            for bullet in shots:
-                if bullet.collides_with(asteroid):
-                    log_event("asteroid_shot")
-                    if asteroid.radius == ASTEROID_MAX_RADIUS:
-                        score += 1
-                    elif asteroid.radius == ASTEROID_MIN_RADIUS:
-                        score += 3
-                    else:
-                        score += 2
-                    bullet.kill()
-                    asteroid.split()
-        for draw in drawable:
-            draw.draw(screen)
+        if not game_over:
+            updatable.update(dt)
+            for asteroid in asteroids:
+                if asteroid.collides_with(my_player):
+                    log_event("player_hit")
+                    game_over = True
+                for bullet in shots:
+                    if bullet.collides_with(asteroid):
+                        log_event("asteroid_shot")
+                        if asteroid.radius == ASTEROID_MAX_RADIUS:
+                            score += 1
+                        elif asteroid.radius == ASTEROID_MIN_RADIUS:
+                            score += 3
+                        else:
+                            score += 2
+                        bullet.kill()
+                        asteroid.split()
+            for draw in drawable:
+                draw.draw(screen)
             score_surface = font.render(f"Score: {score}", True, (255, 255, 255))
             screen.blit(score_surface, (10, 10))
-            if game_over:
-                screen.fill("black")
-                game_over_text = font.render("GAME OVER", True, (255, 0, 0))
-                final_score_text = font.render(f"Final score: {score}", True, (255, 255, 255))
-                screen.blit(game_over_text, ((SCREEN_WIDTH / 2) - (game_over_text.get_width() / 2), SCREEN_HEIGHT / 2 - 20))
-                screen.blit(final_score_text, ((SCREEN_WIDTH / 2) - (final_score_text.get_width() / 2), SCREEN_HEIGHT / 2 + 20))
-                pygame.display.flip()
+        else:
+            game_over_text = font.render("GAME OVER", True, (255, 0, 0))
+            final_score_text = font.render(f"Final score: {score}", True, (255, 255, 255))
+            screen.blit(game_over_text, ((SCREEN_WIDTH / 2) - (game_over_text.get_width() / 2), SCREEN_HEIGHT / 2 - 20))
+            screen.blit(final_score_text, ((SCREEN_WIDTH / 2) - (final_score_text.get_width() / 2), SCREEN_HEIGHT / 2 + 20))       
         pygame.display.flip()
         dt = timer.tick(60) / 1000
 
