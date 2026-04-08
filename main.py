@@ -34,6 +34,14 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
+            if game_over and event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    for sprite in updatable:
+                        sprite.kill()
+                    AsteroidField()
+                    my_player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+                    score = 0
+                    game_over = False
         screen.fill("black")
         if not game_over:
             updatable.update(dt)
@@ -59,8 +67,10 @@ def main():
         else:
             game_over_text = font.render("GAME OVER", True, (255, 0, 0))
             final_score_text = font.render(f"Final score: {score}", True, (255, 255, 255))
+            restart_text = font.render("Press R to start again", True, (255, 255, 255))
             screen.blit(game_over_text, ((SCREEN_WIDTH / 2) - (game_over_text.get_width() / 2), SCREEN_HEIGHT / 2 - 20))
-            screen.blit(final_score_text, ((SCREEN_WIDTH / 2) - (final_score_text.get_width() / 2), SCREEN_HEIGHT / 2 + 20))       
+            screen.blit(final_score_text, ((SCREEN_WIDTH / 2) - (final_score_text.get_width() / 2), SCREEN_HEIGHT / 2 + 20))
+            screen.blit(restart_text, ((SCREEN_WIDTH / 2) - (restart_text.get_width() / 2), SCREEN_HEIGHT / 2 + 60))
         pygame.display.flip()
         dt = timer.tick(60) / 1000
 
