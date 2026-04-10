@@ -14,6 +14,32 @@ def draw_centered_text(screen, font, text, color, y_offset):
     y = (SCREEN_HEIGHT // 2) + y_offset
     screen.blit(surface, (x, y))
 
+def load_high_scores():
+    try:
+        with open("high_scores.txt", "r") as file:
+            lines = file.readlines()
+            scores = []
+            for line in lines:
+                scores.append(int(line.strip()))
+            return sorted(scores + [0, 0, 0], reverse = True)[:3]
+    except (FileNotFoundError, ValueError):
+        return [0, 0, 0]
+
+def save_high_scores(scores):
+    with open("high_scores.txt", "w") as file:
+        for score in scores:
+            file.write(str(score) + "\n")
+
+def display_high_scores(screen, font, high_scores):
+    y_pos = 20
+    high_score_label = font.render("HIGH SCORES:", True, "gold")
+    screen.blit(high_score_label, (20, y_pos))
+
+    for i, hs in enumerate(high_scores):
+        y_pos += 40
+        hs_surface = font.render(f"{i+1}. {hs}", True, "white")
+        screen.blit(hs_surface, (20, y_pos))
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -28,6 +54,7 @@ def main():
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
+    high_scores = load_high_scores()
 
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
@@ -58,22 +85,29 @@ def main():
         screen.fill("black")
 
         if state == "MENU":
+            display_high_scores(screen, font, high_scores)
             draw_centered_text(screen, font, "ASTEROIDS", "white", -20)
             draw_centered_text(screen, font, "Press ENTER to Start", "gray", 20)
             controls = font.render("Controls:", True, (255, 255, 255))
             wsad = font.render("WSAD - Ship controls", True, (255, 255, 255))
             spacebar = font.render("Space - Shoot", True, (255, 255, 255))
-            screen.blit(controls, (20, 20))
-            screen.blit(wsad, (20, 60))
-            screen.blit(spacebar, (20, 100))
+            screen.blit(controls, (20, SCREEN_HEIGHT - 120))
+            screen.blit(wsad, (20, SCREEN_HEIGHT - 80))
+            screen.blit(spacebar, (20, SCREEN_HEIGHT - 40))
 
         elif state == "PLAYING":
             updatable.update(dt)
 
             for asteroid in asteroids:
                 if asteroid.collides_with(my_player):
-                    log_event("player_hit")
-                    state = "GAME_OVER"
+                    if state != "GAME_OVER":
+                        log_event("player_hit")
+                        state = "GAME_OVER"
+                        high_scores.append(score)
+                        high_scores = sorted(high_scores, reverse=True)[:3]
+                        save_high_scores(high_scores)
+                        break
+
                 for bullet in shots:
                     if bullet.collides_with(asteroid):
                         log_event("asteroid_shot")
@@ -93,6 +127,7 @@ def main():
             screen.blit(score_surface, (10, 10))
 
         elif state == "GAME_OVER":
+            display_high_scores(screen, font, high_scores)
             draw_centered_text(screen, font, "GAME OVER", "red", -20)
             draw_centered_text(screen, font, f"Final Score: {score}", "white", 20)
             draw_centered_text(screen, font, "Press R to Restart", "white", 60)
