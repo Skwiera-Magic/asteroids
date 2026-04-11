@@ -38,7 +38,7 @@ def main():
                 return
 
             if state == "MENU":
-                if event.key == pygame.K_RETURN and event.type == pygame.KEYDOWN:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     for sprite in updatable:
                         sprite.kill()
                     AsteroidField()
@@ -46,7 +46,7 @@ def main():
                     score = 0
                     state = "PLAYING"
 
-            elif state = "PLAYING":
+            elif state == "PLAYING":
                 pass
 
             elif state == "INPUT_NAME":
@@ -64,7 +64,7 @@ def main():
                             player_name += event.unicode
 
             elif state == "GAME_OVER":
-                if event.key == pygame.K_r and event.type == pygame.KEYDOWN:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
                     for sprite in updatable:
                         sprite.kill()
                     AsteroidField()
