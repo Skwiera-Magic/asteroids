@@ -52,6 +52,19 @@ def main():
                     score = 0
                     state = "PLAYING"
 
+            if state == "INPUT_NAME":
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        high_scores.append({"name": player_name, "score": score})
+                        high_scores = sorted(high_scores, key=lambda x: x["score"], reverse=True)[:3]
+                        save_high_scores(high_scores)
+                        state = "GAME_OVER"
+                    elif event.key == pygame.K_BACKSPACE:
+                        player_name = player_name[:-1]
+                    else:
+                        if len(player_name) < 10 and event.unicode.isprintable():
+                            player_name += event.unicode
+
         screen.fill("black")
 
         if state == "MENU":
@@ -70,12 +83,14 @@ def main():
 
             for asteroid in asteroids:
                 if asteroid.collides_with(my_player):
-                    if state != "GAME_OVER":
+                    if state != "GAME_OVER" and state != "INPUT_NAME":
                         log_event("player_hit")
-                        state = "GAME_OVER"
-                        high_scores.append(score)
-                        high_scores = sorted(high_scores, reverse=True)[:3]
-                        save_high_scores(high_scores)
+                        lowest_high_score = high_scores[-1]["score"]
+                        if score > lowest_high_score:
+                            state = "INPUT_NAME"
+                            player_name = ""
+                        else:
+                            state = "GAME_OVER"
                         break
 
                 for bullet in shots:
@@ -95,6 +110,14 @@ def main():
 
             score_surface = font.render(f"Score: {score}", True, (255, 255, 255))
             screen.blit(score_surface, (10, 10))
+
+        elif state == "INPUT_NAME":
+            screen.fill("black")
+            draw_centered_text(screen, font, "NEW HIGH SCORE!", "gold", -60)
+            draw_centered_text(screen, font, f"Score: {score}", "white", -20)
+            draw_centered_text(screen, font, "Enter your name", "white", 20)
+            draw_centered_text(screen, font, player_name + "_", "cyan", 60)
+            draw_centered_text(screen, font, "Press ENTER to confirm", "gray", 120)
 
         elif state == "GAME_OVER":
             display_high_scores(screen, font, high_scores)

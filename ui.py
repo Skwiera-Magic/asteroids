@@ -14,5 +14,5 @@ def display_high_scores(screen, font, high_scores):
 
     for i, hs in enumerate(high_scores):
         y_pos += 40
-        hs_surface = font.render(f"{i+1}. {hs}", True, "white")
+        hs_surface = font.render(f"{i+1}. {hs['name']} - {hs['score']}", True, "white")
         screen.blit(hs_surface, (20, y_pos))
