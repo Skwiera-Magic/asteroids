@@ -37,14 +37,8 @@ def main():
             if event.type == pygame.QUIT:
                 return
 
-            if state == "MENU" and event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    AsteroidField()
-                    my_player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-                    state = "PLAYING"
-
-            if state == "GAME_OVER" and event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
+            if state == "MENU":
+                if event.key == pygame.K_RETURN and event.type == pygame.KEYDOWN:
                     for sprite in updatable:
                         sprite.kill()
                     AsteroidField()
@@ -52,9 +46,13 @@ def main():
                     score = 0
                     state = "PLAYING"
 
-            if state == "INPUT_NAME":
+            elif state = "PLAYING":
+                pass
+
+            elif state == "INPUT_NAME":
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
+                        final_name = player_name if player_name.strip() else "Pilot"
                         high_scores.append({"name": player_name, "score": score})
                         high_scores = sorted(high_scores, key=lambda x: x["score"], reverse=True)[:3]
                         save_high_scores(high_scores)
@@ -64,6 +62,15 @@ def main():
                     else:
                         if len(player_name) < 10 and event.unicode.isprintable():
                             player_name += event.unicode
+
+            elif state == "GAME_OVER":
+                if event.key == pygame.K_r and event.type == pygame.KEYDOWN:
+                    for sprite in updatable:
+                        sprite.kill()
+                    AsteroidField()
+                    my_player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+                    score = 0
+                    state = "PLAYING"
 
         screen.fill("black")
 
@@ -116,8 +123,10 @@ def main():
             draw_centered_text(screen, font, "NEW HIGH SCORE!", "gold", -60)
             draw_centered_text(screen, font, f"Score: {score}", "white", -20)
             draw_centered_text(screen, font, "Enter your name", "white", 20)
-            draw_centered_text(screen, font, player_name + "_", "cyan", 60)
-            draw_centered_text(screen, font, "Press ENTER to confirm", "gray", 120)
+            draw_centered_text(screen, font, "Max 10 digits", "white", 60)
+            cursor = "_" if pygame.time.get_ticks() % 1000 < 500 else " "
+            draw_centered_text(screen, font, player_name + "_", "cyan", 100)
+            draw_centered_text(screen, font, "Press ENTER to confirm", "gray", 160)
 
         elif state == "GAME_OVER":
             display_high_scores(screen, font, high_scores)
