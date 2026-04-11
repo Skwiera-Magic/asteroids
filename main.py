@@ -47,13 +47,13 @@ def main():
                     state = "PLAYING"
 
             elif state == "PLAYING":
-                pass
+                updatable.update(dt, score)
 
             elif state == "INPUT_NAME":
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         final_name = player_name if player_name.strip() else "Pilot"
-                        high_scores.append({"name": player_name, "score": score})
+                        high_scores.append({"name": final_name, "score": score})
                         high_scores = sorted(high_scores, key=lambda x: x["score"], reverse=True)[:3]
                         save_high_scores(high_scores)
                         state = "GAME_OVER"

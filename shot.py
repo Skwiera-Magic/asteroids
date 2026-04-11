@@ -9,7 +9,7 @@ class Shot(CircleShape):
     def draw(self, screen):
         pygame.draw.circle(screen, "white", self.position, self.radius, LINE_WIDTH)
 
-    def update(self, dt):
+    def update(self, dt, *args):
         self.position += self.velocity * dt
         if (self.position.x > SCREEN_WIDTH or self.position.x < 0 or 
             self.position.y > SCREEN_HEIGHT or self.position.y < 0):
