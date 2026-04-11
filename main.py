@@ -7,38 +7,8 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
-
-def draw_centered_text(screen, font, text, color, y_offset):
-    surface = font.render(text, True, color)
-    x = (SCREEN_WIDTH // 2) - (surface.get_width() // 2)
-    y = (SCREEN_HEIGHT // 2) + y_offset
-    screen.blit(surface, (x, y))
-
-def load_high_scores():
-    try:
-        with open("high_scores.txt", "r") as file:
-            lines = file.readlines()
-            scores = []
-            for line in lines:
-                scores.append(int(line.strip()))
-            return sorted(scores + [0, 0, 0], reverse = True)[:3]
-    except (FileNotFoundError, ValueError):
-        return [0, 0, 0]
-
-def save_high_scores(scores):
-    with open("high_scores.txt", "w") as file:
-        for score in scores:
-            file.write(str(score) + "\n")
-
-def display_high_scores(screen, font, high_scores):
-    y_pos = 20
-    high_score_label = font.render("HIGH SCORES:", True, "gold")
-    screen.blit(high_score_label, (20, y_pos))
-
-    for i, hs in enumerate(high_scores):
-        y_pos += 40
-        hs_surface = font.render(f"{i+1}. {hs}", True, "white")
-        screen.blit(hs_surface, (20, y_pos))
+from scores import load_high_scores, save_high_scores
+from ui import draw_centered_text, display_high_scores
 
 def main():
     pygame.init()
