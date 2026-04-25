@@ -12,7 +12,10 @@ from ui import draw_centered_text, display_high_scores, draw_menu, draw_input, d
 from setup import initialize_game
 
 def main():
-    screen, font, timer, updatable, drawable, asteroids, shots, high_scores = initialize_game()
+    (
+        screen, font, timer, updatable, drawable, asteroids, shots, high_scores,
+        explosion_sound, hit_sound, shot_sound
+        ) = initialize_game()
 
     state = "MENU"
     dt = 0
@@ -30,7 +33,7 @@ def main():
                     for sprite in updatable:
                         sprite.kill()
                     AsteroidField()
-                    my_player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+                    my_player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, shot_sound)
                     score = 0
                     state = "PLAYING"
 
@@ -53,7 +56,7 @@ def main():
                     for sprite in updatable:
                         sprite.kill()
                     AsteroidField()
-                    my_player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+                    my_player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, shot_sound)
                     score = 0
                     state = "PLAYING"
 
@@ -67,6 +70,8 @@ def main():
 
             for asteroid in asteroids:
                 if asteroid.collides_with(my_player):
+                    if hit_sound:
+                        hit_sound.play()
                     if state != "GAME_OVER" and state != "INPUT_NAME":
                         log_event("player_hit")
                         lowest_high_score = high_scores[-1]["score"]
@@ -80,6 +85,8 @@ def main():
                 for bullet in shots:
                     if bullet.collides_with(asteroid):
                         log_event("asteroid_shot")
+                        if explosion_sound:
+                            explosion_sound.play()
                         if asteroid.radius == ASTEROID_MAX_RADIUS:
                             score += 1
                         elif asteroid.radius == ASTEROID_MIN_RADIUS:

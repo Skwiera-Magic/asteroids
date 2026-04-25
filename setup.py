@@ -24,4 +24,23 @@ def initialize_game():
     
     high_scores = load_high_scores()
 
-    return screen, font, timer, updatable, drawable, asteroids, shots, high_scores
+    explosion_sound = None
+    hit_sound = None
+    shot_sound = None
+
+    try:
+        pygame.mixer.init()
+        explosion_sound = pygame.mixer.Sound("sound1.wav")
+        explosion_sound.set_volume(0.3)
+        hit_sound = pygame.mixer.Sound("sound2.wav")
+        hit_sound.set_volume(0.3)
+        shot_sound = pygame.mixer.Sound("sound3.wav")
+        shot_sound.set_volume(0.3)
+    except pygame.error:
+        print("Warning: Audio device not found, playing without sound.")
+
+
+    return (
+        screen, font, timer, updatable, drawable, asteroids, shots, high_scores,
+        explosion_sound, hit_sound, shot_sound
+        )

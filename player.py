@@ -4,10 +4,11 @@ from constants import *
 from shot import Shot
 
 class Player(CircleShape):
-    def __init__(self, x, y):
+    def __init__(self, x, y, shot_sound):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.shot_cooldown = 0
+        self.shot_sound = shot_sound
 
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -55,3 +56,5 @@ class Player(CircleShape):
         rotated_bullet = bullet_vector.rotate(self.rotation)
         shot_bullet = rotated_bullet * PLAYER_SHOOT_SPEED
         bullet.velocity = shot_bullet
+        if self.shot_sound:
+            self.shot_sound.play()
