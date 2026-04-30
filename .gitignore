@@ -3,4 +3,6 @@ game_events.jsonl
 high_scores.txt
 /build
 venv
-main.spec
+*.spec
+__pycache__/
+dist
