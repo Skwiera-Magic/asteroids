@@ -4,8 +4,8 @@ A classic arcade-style space shooter built with Python and Pygame.
 
 ## How to Play
 
-1. **Download:** Grab the latest release from the `dist` folder.
-2. **Run:** Double-click `main.exe` (ensure the `sounds` folder is in the same directory!).
+1. **Download:** Grab the latest release from the root folder.
+2. **Run:** Double-click `Asteroids.exe` (ensure the `sounds` are in the same directory!).
 3. **Controls:**
     * **Rotate:** `A` and `D` or Left/Right arrows
     * **Thrust:** `W` or Up arrow
