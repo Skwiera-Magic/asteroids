@@ -1,3 +1,6 @@
 game_state.jsonl
 game_events.jsonl
 high_scores.txt
+/build
+venv
+main.spec
